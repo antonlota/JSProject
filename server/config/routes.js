@@ -18,7 +18,7 @@ module.exports = function(app) {
 
   app.get("/damage/:id/:damage", users.damageDealt);
 
-  app.get("/timer", users.timer);
+  app.get("/reload", users.reload);
 
   //   app.get("/users/edit/:id", users.editAnimal);
 

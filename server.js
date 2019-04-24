@@ -44,6 +44,9 @@ io.on("connection", function(socket) {
 
   socket.on("normal_punch", function(data) {
     session.damage += parseInt(data.damage);
+    socket.emit("button_update", {
+      damage: session.damage
+    });
     User.update(
       { _id: data.name },
       { $set: { damage: session.damage } },
@@ -56,6 +59,9 @@ io.on("connection", function(socket) {
 
   socket.on("serious_punch", function(data) {
     session.damage += parseInt(data.damage);
+    socket.emit("button_update", {
+      damage: session.damage
+    });
     User.update(
       { _id: data.name },
       { $set: { damage: session.damage } },
@@ -68,6 +74,9 @@ io.on("connection", function(socket) {
 
   socket.on("really_serious_punch", function(data) {
     session.damage += parseInt(data.damage);
+    socket.emit("button_update", {
+      damage: session.damage
+    });
     User.update(
       { _id: data.name },
       { $set: { damage: session.damage } },

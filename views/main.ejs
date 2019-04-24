@@ -73,6 +73,7 @@
     <a class="btn btn-info" href="/users/<%= data[0].id%>">Account Details</a>
     <a type="button" class="btn btn-secondary" href="/logout">Logout</a>
     <p>Unlock more attacks by doing more damage</p>
+    <p>Go to account details that unlock new attack!</p>
 
     <p class="trash"></p>
 
@@ -81,17 +82,29 @@
       <img class="hero1" src="/images/zeeface.jpg" alt="hero" />
       <button class="btn btn-success weakPunch" href="#">Weak Punch</button>
 
-      <div id="punchNormal"></div>
-      <% if(data[0].damage > 10 ) {%>
-      <button class="btn btn-warning seriousPunch" href="#">
-        Serious Punch
-      </button>
+      <div id="punchNormal">
+        <% if(data[0].damage >= 5 ) {%>
+        <button class="btn btn-primary normalPunch" value="5" href="#">
+          Normal Punch
+        </button>
+        <button class="btn btn-primary normal" href="#"></button>
+        <% } %>
+      </div>
+      <div id="punchSerious">
+        <% if(data[0].damage >= 10 ) {%>
+        <button class="btn btn-warning seriousPunch" value="10" href="#">
+          Serious Punch
+        </button>
+        <% } %>
+      </div>
 
-      <% } %> <% if(data[0].damage > 15 ) {%>
-      <button class="btn btn-danger reallySeriousPunch" href="#">
-        Really Serious Punch
-      </button>
-      <% } %>
+      <div id="punchReallySerious">
+        <% if(data[0].damage >= 15 ) {%>
+        <button class="btn btn-danger reallySeriousPunch" value="15" href="#">
+          Really Serious Punch
+        </button>
+        <% } %>
+      </div>
     </div>
     <div class="box box1">
       <h3>Unbeatable Monster Rankings</h3>
@@ -120,6 +133,19 @@
         var id = $("#id").val();
         socket.emit("normal_punch", { name: id, damage: parseInt(attack) });
         socket.emit("update_ranking");
+        socket.emit("update_buttons");
+        function hide() {
+          $(".normalPunch").hide();
+
+          //   <button class="btn btn-primary normalPunch" value="5" href="#">
+          //   Normal Punch
+          // </button>
+        }
+        hide();
+        setTimeout(show, 5000);
+        function show() {
+          $(".normalPunch").show();
+        }
         console.log(` name: ${id}, damage: ${attack} `);
       });
 
@@ -128,6 +154,7 @@
         var id = $("#id").val();
         socket.emit("serious_punch", { name: id, damage: parseInt(attack) });
         socket.emit("update_ranking");
+        socket.emit("update_buttons");
         console.log(` name: ${id}, damage: ${attack} `);
       });
 
@@ -139,6 +166,7 @@
           damage: parseInt(attack)
         });
         socket.emit("update_ranking");
+        socket.emit("update_buttons");
         console.log(` name: ${id}, damage: ${attack} `);
       });
 
@@ -155,24 +183,32 @@
       });
 
       socket.on("button_update", function(data) {
-        console.log("i am working");
-        console.log(data.damage);
-        if (data.damage == 5) {
-          $("#punchNormal").append(`
+        if (data.damage >= 5 && $(".normalPunch").val() == 5) {
+          console.log("normal unlocked");
+        } else if (data.damage >= 5) {
+          $("#punchNormal").html(`
         <button class="btn btn-primary normalPunch" href="#">
-          Normal Punch
+          Go to account details!!!
         </button>`);
         }
-        $(
-          ".seriousPunch"
-        ).html(`<button class="btn btn-warning seriousPunch" href="#">
-          Serious Punch
+
+        if (data.damage >= 10 && $(".seriousPunch").val() == 10) {
+          console.log("serious unlocked");
+        } else if (data.damage >= 10) {
+          $("#punchSerious")
+            .html(`<button class="btn btn-warning seriousPunch" href="#">
+              Go to account details!!!
+      </button>`);
+        }
+
+        if (data.damage >= 15 && $(".reallySeriousPunch").val() == 15) {
+          console.log("very serious unlocked");
+        } else if (data.damage >= 15) {
+          $("#punchReallySerious")
+            .html(`<button class="btn btn-danger reallySeriousPunch" href="#">
+              Go to account details!!!
         </button>`);
-        //   $(
-        //     ".reallySeriousPunch"
-        //   ).html(`<button class="btn btn-danger reallySeriousPunch" href="#">
-        //   Really Serious Punch
-        // </button>`);
+        }
       });
 
       var x = document.getElementsByTagName("time")[0],

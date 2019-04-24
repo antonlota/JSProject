@@ -97,7 +97,7 @@ module.exports = {
     );
   },
 
-  timer: function(req, res) {
-    res.render("timer");
+  reload: function(req, res) {
+    res.redirect("/main");
   }
 };
