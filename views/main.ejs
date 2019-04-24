@@ -67,37 +67,171 @@
   </head>
   <body>
     <h1>The unbeatable monster!!!</h1>
-    <h3><%= data[0].username%>'s Current Playtime:</h3>
+    <input id="id" name="id" type="hidden" value="<%= data[0].id %>" />
+
+    <h3><%= data[0].username%>'s Current Playtime: <time>00:00:00</time></h3>
     <a class="btn btn-info" href="/users/<%= data[0].id%>">Account Details</a>
     <a type="button" class="btn btn-secondary" href="/logout">Logout</a>
     <p>Unlock more attacks by doing more damage</p>
+
+    <p class="trash"></p>
+
     <div class="box">
       <img class="monster1" src="/images/monster1.jpg" alt="monster" />
-      <img class="hero1" src="/images/hero.png" alt="hero" />
-      <a class="btn btn-success" href="/damage/<%= data[0].id%>/1"
-        >Weak Punch</a
-      >
-      <% if(data[0].damage > 5 ) {%>
-      <a class="btn btn-primary" href="/damage/<%= data[0].id%>/3"
-        >Normal Punch</a
-      >
-      <% } %> <% if(data[0].damage > 10 ) {%>
-      <a class="btn btn-warning" href="/damage/<%= data[0].id%>/10"
-        >Serious Punch</a
-      >
+      <img class="hero1" src="/images/zeeface.jpg" alt="hero" />
+      <button class="btn btn-success weakPunch" href="#">Weak Punch</button>
+
+      <div id="punchNormal"></div>
+      <% if(data[0].damage > 10 ) {%>
+      <button class="btn btn-warning seriousPunch" href="#">
+        Serious Punch
+      </button>
+
       <% } %> <% if(data[0].damage > 15 ) {%>
-      <a class="btn btn-danger" href="/damage/<%= data[0].id%>/20"
-        >Really Serious Punch</a
-      >
+      <button class="btn btn-danger reallySeriousPunch" href="#">
+        Really Serious Punch
+      </button>
       <% } %>
     </div>
     <div class="box box1">
       <h3>Unbeatable Monster Rankings</h3>
-      <ol>
+
+      <ol id="ranker">
         <% for(x in all ){%>
         <li><%= all[x].username %>: <%= all[x].damage %> damage</li>
         <% } %>
       </ol>
     </div>
+
+    <script type="text/javascript">
+      var socket = io();
+
+      $(".weakPunch").click(function() {
+        var attack = 1;
+        var id = $("#id").val();
+        socket.emit("weak_punch", { name: id, damage: parseInt(attack) });
+        socket.emit("update_ranking");
+        socket.emit("update_buttons");
+        console.log(` name: ${id}, damage: ${attack} `);
+      });
+
+      $(".normalPunch").click(function() {
+        var attack = 5;
+        var id = $("#id").val();
+        socket.emit("normal_punch", { name: id, damage: parseInt(attack) });
+        socket.emit("update_ranking");
+        console.log(` name: ${id}, damage: ${attack} `);
+      });
+
+      $(".seriousPunch").click(function() {
+        var attack = 10;
+        var id = $("#id").val();
+        socket.emit("serious_punch", { name: id, damage: parseInt(attack) });
+        socket.emit("update_ranking");
+        console.log(` name: ${id}, damage: ${attack} `);
+      });
+
+      $(".reallySeriousPunch").click(function() {
+        var attack = 15;
+        var id = $("#id").val();
+        socket.emit("really_serious_punch", {
+          name: id,
+          damage: parseInt(attack)
+        });
+        socket.emit("update_ranking");
+        console.log(` name: ${id}, damage: ${attack} `);
+      });
+
+      socket.on("sent", function(data) {
+        // console.log(data.ranking);
+        $("#ranker").html(``);
+        for (p in data.ranking) {
+          $("#ranker").append(
+            `<li>${data.ranking[p].username}:  ${
+              data.ranking[p].damage
+            } damage</li>`
+          );
+        }
+      });
+
+      socket.on("button_update", function(data) {
+        console.log("i am working");
+        console.log(data.damage);
+        if (data.damage == 5) {
+          $("#punchNormal").append(`
+        <button class="btn btn-primary normalPunch" href="#">
+          Normal Punch
+        </button>`);
+        }
+        $(
+          ".seriousPunch"
+        ).html(`<button class="btn btn-warning seriousPunch" href="#">
+          Serious Punch
+        </button>`);
+        //   $(
+        //     ".reallySeriousPunch"
+        //   ).html(`<button class="btn btn-danger reallySeriousPunch" href="#">
+        //   Really Serious Punch
+        // </button>`);
+      });
+
+      var x = document.getElementsByTagName("time")[0],
+        seconds = 0,
+        minutes = 0,
+        hours = 0,
+        t;
+
+      function add() {
+        seconds++;
+        if (seconds >= 60) {
+          seconds = 0;
+          minutes++;
+          if (minutes >= 60) {
+            minutes = 0;
+            hours++;
+          }
+        }
+
+        x.textContent =
+          (hours ? (hours > 9 ? hours : "0" + hours) : "00") +
+          ":" +
+          (minutes ? (minutes > 9 ? minutes : "0" + minutes) : "00") +
+          ":" +
+          (seconds > 9 ? seconds : "0" + seconds);
+
+        timer();
+      }
+      function timer() {
+        t = setTimeout(add, 1000);
+      }
+      timer();
+      var trashTalk = [
+        "This is getting boring",
+        "You can't see me",
+        "stop it! that tickles!",
+        "are you even trying?",
+        "Sooo, when are we gonna start this fight?",
+        "My granny hits harder than you",
+        "*yawn*",
+        "ZZZzzz"
+      ];
+
+      function randomNumber() {
+        var indexNum = Math.floor(Math.random() * trashTalk.length);
+        return indexNum;
+      }
+      function talkTrash() {
+        $(".trash").html(` ${trashTalk[randomNumber()]}`);
+        timerTrash();
+      }
+      // if (parseInt(seconds) % 5 == 0) {
+      //   randomNumber();
+      //   talkTrash();
+      // }
+      function timerTrash() {
+        q = setTimeout(talkTrash, 1000);
+      }
+      timerTrash();
+    </script>
   </body>
 </html>

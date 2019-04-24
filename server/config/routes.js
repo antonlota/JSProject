@@ -18,6 +18,8 @@ module.exports = function(app) {
 
   app.get("/damage/:id/:damage", users.damageDealt);
 
+  app.get("/timer", users.timer);
+
   //   app.get("/users/edit/:id", users.editAnimal);
 
   //   app.post("/users/update", users.updateAnimal);

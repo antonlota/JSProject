@@ -10,7 +10,7 @@ module.exports = {
   },
 
   logout: function(req, res) {
-    console.log(req.session);
+    // console.log(req.session);
     req.session.destroy();
     res.redirect("/");
   },
@@ -27,7 +27,7 @@ module.exports = {
           res.redirect("/main");
         })
         .catch(error => {
-          console.log("there was an error", error);
+          // console.log("there was an error", error);
           res.redirect("/");
         });
     });
@@ -49,17 +49,18 @@ module.exports = {
   },
 
   main: function(req, res) {
-    User.find({}, function(err, all) {
-      // model.find({ ... }).sort({ field : criteria}).exec(function(err, model){ ... });
-      User.find({ _id: session.id }, function(err, data) {
-        res.render("main", { data: data, all: all });
-        console.log(all);
+    User.find({})
+      .sort({ damage: "descending" })
+      .exec(function(err, all) {
+        User.find({ _id: session.id }, function(err, data) {
+          res.render("main", { data: data, all: all });
+          // console.log(all);
+        });
       });
-    });
   },
 
   destroyUser: function(req, res) {
-    console.log(req.params.id);
+    // console.log(req.params.id);
     User.remove({ _id: req.params.id }, function(err) {
       res.redirect("/");
     });
@@ -72,7 +73,7 @@ module.exports = {
   },
 
   updateAccount: function(req, res) {
-    console.log(req.body.id);
+    // console.log(req.body.id);
     bcrypt.hash(req.body.password, 10).then(hashed_password => {
       User.update(
         { _id: req.body.id },
@@ -85,7 +86,7 @@ module.exports = {
   },
 
   damageDealt: function(req, res) {
-    console.log(session.damage);
+    // console.log(session.damage);
     session.damage += parseInt(req.params.damage);
     User.update(
       { _id: req.params.id },
@@ -94,5 +95,9 @@ module.exports = {
         res.redirect("/main");
       }
     );
+  },
+
+  timer: function(req, res) {
+    res.render("timer");
   }
 };
