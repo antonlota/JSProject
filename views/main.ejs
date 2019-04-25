@@ -87,13 +87,18 @@
         <button class="btn btn-primary normalPunch" value="5" href="#">
           Normal Punch
         </button>
-        <button class="btn btn-primary normal" href="#"></button>
+        <button class="btn btn-primary normal" href="#">
+          5 second cooldown
+        </button>
         <% } %>
       </div>
       <div id="punchSerious">
         <% if(data[0].damage >= 10 ) {%>
         <button class="btn btn-warning seriousPunch" value="10" href="#">
           Serious Punch
+        </button>
+        <button class="btn btn-warning serious" href="#">
+          10 second cooldown
         </button>
         <% } %>
       </div>
@@ -102,6 +107,9 @@
         <% if(data[0].damage >= 15 ) {%>
         <button class="btn btn-danger reallySeriousPunch" value="15" href="#">
           Really Serious Punch
+        </button>
+        <button class="btn btn-danger reallySerious" href="#">
+          20 second cooldown
         </button>
         <% } %>
       </div>
@@ -119,6 +127,10 @@
     <script type="text/javascript">
       var socket = io();
 
+      $(".normal").hide();
+      $(".serious").hide();
+      $(".reallySerious").hide();
+
       $(".weakPunch").click(function() {
         var attack = 1;
         var id = $("#id").val();
@@ -134,17 +146,16 @@
         socket.emit("normal_punch", { name: id, damage: parseInt(attack) });
         socket.emit("update_ranking");
         socket.emit("update_buttons");
+        $(".normalPunch").hide();
         function hide() {
           $(".normalPunch").hide();
-
-          //   <button class="btn btn-primary normalPunch" value="5" href="#">
-          //   Normal Punch
-          // </button>
+          $(".normal").show();
         }
         hide();
         setTimeout(show, 5000);
         function show() {
           $(".normalPunch").show();
+          $(".normal").hide();
         }
         console.log(` name: ${id}, damage: ${attack} `);
       });
@@ -155,6 +166,17 @@
         socket.emit("serious_punch", { name: id, damage: parseInt(attack) });
         socket.emit("update_ranking");
         socket.emit("update_buttons");
+        $(".seriousPunch").hide();
+        function hide() {
+          $(".seriousPunch").hide();
+          $(".serious").show();
+        }
+        hide();
+        setTimeout(show, 10000);
+        function show() {
+          $(".seriousPunch").show();
+          $(".serious").hide();
+        }
         console.log(` name: ${id}, damage: ${attack} `);
       });
 
@@ -167,6 +189,17 @@
         });
         socket.emit("update_ranking");
         socket.emit("update_buttons");
+        $(".reallySeriousPunch").hide();
+        function hide() {
+          $(".reallySeriousPunch").hide();
+          $(".reallySerious").show();
+        }
+        hide();
+        setTimeout(show, 10000);
+        function show() {
+          $(".reallySeriousPunch").show();
+          $(".reallySerious").hide();
+        }
         console.log(` name: ${id}, damage: ${attack} `);
       });
 
