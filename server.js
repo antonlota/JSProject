@@ -8,6 +8,8 @@ const io = require("socket.io")(server);
 const mongoose = require("mongoose");
 require("./server/models/user.js");
 const User = mongoose.model("User");
+const flash = require("express-flash");
+app.use(flash());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "./static")));
 app.set("views", path.join(__dirname, "./views"));

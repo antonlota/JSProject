@@ -3,6 +3,7 @@ require("../models/user.js");
 const User = mongoose.model("User");
 const bcrypt = require("bcrypt");
 const session = require("express-session");
+const flash = require("express-flash");
 
 module.exports = {
   index: function(req, res) {
@@ -21,13 +22,26 @@ module.exports = {
         .compare(req.body.password, data[0].password)
 
         .then(result => {
-          session.id = data[0]._id;
-          session.username = data[0].username;
-          session.damage = data[0].damage;
-          res.redirect("/main");
+          if (result != true) {
+            console.log(err);
+            req.flash(
+              "success",
+              "This is a flash message using the express-flash module."
+            );
+            console.log(req.flash.success);
+            console.log("result is false");
+          } else {
+            session.id = data[0]._id;
+            session.username = data[0].username;
+            session.damage = data[0].damage;
+
+            // console.log(data[0].password);
+            // console.log(result);
+            res.redirect("/main");
+          }
         })
         .catch(error => {
-          // console.log("there was an error", error);
+          console.log("there was an error", error);
           res.redirect("/");
         });
     });
@@ -99,5 +113,9 @@ module.exports = {
 
   reload: function(req, res) {
     res.redirect("/main");
+  },
+
+  superman: function(req, res) {
+    res.render("superman");
   }
 };

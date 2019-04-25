@@ -40,9 +40,14 @@
       });
     </script>
     <style>
+      * {
+        outline: pink 1px solid;
+      }
       .monster1 {
-        margin-left: 40%;
-        display: block;
+        margin-left: 12em;
+        /* display: block; */
+        width: 320px;
+        height: 320px;
       }
 
       .box {
@@ -54,76 +59,119 @@
       }
 
       .box1 {
+        margin-left: 10em;
         border: 1px black solid;
+        display: inline-block;
+        margin-right: 0em;
+      }
+
+      .box2 {
+        margin-right: 25em;
+        display: inline-block;
+        width: 400px;
+      }
+
+      body {
+        text-align: center;
+        /* margin-right: 100%; */
+      }
+
+      .attack {
+        display: inline-block;
+        margin: 0;
+      }
+
+      .bgpixel {
+        background: url(https://media.giphy.com/media/4fsaueq5lCV4A/giphy.gif);
+        background-repeat: no-repeat;
+        height: 596px;
+        width: 600px;
+        float: left;
+        background-size: cover;
+      }
+
+      .trash {
+        color: red;
       }
 
       .hero1 {
-        display: block;
-        width: 150px;
-        height: 150px;
+        /* display: block; */
+        width: 550px;
+        height: 120px;
+        margin-right: 20%;
       }
     </style>
     <title>Main Page</title>
   </head>
   <body>
-    <h1>The unbeatable monster!!!</h1>
-    <input id="id" name="id" type="hidden" value="<%= data[0].id %>" />
+    <div class="container">
+      <h1>The unbeatable monster!!!</h1>
+      <input id="id" name="id" type="hidden" value="<%= data[0].id %>" />
 
-    <h3><%= data[0].username%>'s Current Playtime: <time>00:00:00</time></h3>
-    <a class="btn btn-info" href="/users/<%= data[0].id%>">Account Details</a>
-    <a type="button" class="btn btn-secondary" href="/logout">Logout</a>
-    <p>Unlock more attacks by doing more damage</p>
-    <p>Go to account details that unlock new attack!</p>
+      <h3><%= data[0].username%>'s Current Playtime: <time>00:00:00</time></h3>
+      <a class="btn btn-info" href="/users/<%= data[0].id%>">Account Details</a>
+      <a class="btn btn-info" href="/logout">Logout</a>
+      <h5>Unlock more attacks by doing more damage</h5>
+      <h5>Go to account details that unlock new attack!</h5>
+      <h3>Monster Says:</h3>
+      <h3 class="trash">Let's Begin</h3>
 
-    <p class="trash"></p>
+      <div class="bgpixel">
+        <div class="box box2">
+          <!-- src="https://media.giphy.com/media/CEqMShyj3Oyly/giphy.gif" -->
+          <img class="monster1" src="/images/wraith.gif" alt="monster" />
+          <img class="hero1" src="/images/lightHero.gif" alt="hero" />
+          <button class="btn btn-success weakPunch" href="#">
+            Static Strike
+          </button>
 
-    <div class="box">
-      <img class="monster1" src="/images/monster1.jpg" alt="monster" />
-      <img class="hero1" src="/images/zeeface.jpg" alt="hero" />
-      <button class="btn btn-success weakPunch" href="#">Weak Punch</button>
+          <div class="attack" id="punchNormal">
+            <% if(data[0].damage >= 5 ) {%>
+            <button class="btn btn-primary normalPunch" value="5" href="#">
+              Electric Shock
+            </button>
+            <button class="btn btn-primary normal" href="#">
+              5 second cooldown
+            </button>
+            <% } %>
+          </div>
+          <div class="attack" id="punchSerious">
+            <% if(data[0].damage >= 10 ) {%>
+            <button class="btn btn-warning seriousPunch" value="10" href="#">
+              Thundering Charge
+            </button>
+            <button class="btn btn-warning serious" href="#">
+              10 second cooldown
+            </button>
+            <% } %>
+          </div>
 
-      <div id="punchNormal">
-        <% if(data[0].damage >= 5 ) {%>
-        <button class="btn btn-primary normalPunch" value="5" href="#">
-          Normal Punch
-        </button>
-        <button class="btn btn-primary normal" href="#">
-          5 second cooldown
-        </button>
-        <% } %>
+          <div class="attack" id="punchReallySerious">
+            <% if(data[0].damage >= 15 ) {%>
+            <button
+              class="btn btn-danger reallySeriousPunch"
+              value="15"
+              href="#"
+            >
+              Plasma Impact
+            </button>
+            <button class="btn btn-danger reallySerious" href="#">
+              20 second cooldown
+            </button>
+            <% } %>
+          </div>
+        </div>
       </div>
-      <div id="punchSerious">
-        <% if(data[0].damage >= 10 ) {%>
-        <button class="btn btn-warning seriousPunch" value="10" href="#">
-          Serious Punch
-        </button>
-        <button class="btn btn-warning serious" href="#">
-          10 second cooldown
-        </button>
-        <% } %>
-      </div>
+      <div class="box box1">
+        <h3>Unbeatable Monster Rankings</h3>
 
-      <div id="punchReallySerious">
-        <% if(data[0].damage >= 15 ) {%>
-        <button class="btn btn-danger reallySeriousPunch" value="15" href="#">
-          Really Serious Punch
-        </button>
-        <button class="btn btn-danger reallySerious" href="#">
-          20 second cooldown
-        </button>
-        <% } %>
+        <ol id="ranker">
+          <% for(x in all ){%>
+          <li><%= all[x].username %>: <%= all[x].damage %> damage</li>
+          <% } %>
+        </ol>
       </div>
     </div>
-    <div class="box box1">
-      <h3>Unbeatable Monster Rankings</h3>
-
-      <ol id="ranker">
-        <% for(x in all ){%>
-        <li><%= all[x].username %>: <%= all[x].damage %> damage</li>
-        <% } %>
-      </ol>
-    </div>
-
     <script type="text/javascript">
       var socket = io();
 

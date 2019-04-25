@@ -20,6 +20,8 @@ module.exports = function(app) {
 
   app.get("/reload", users.reload);
 
+  app.get("/superman", users.superman);
+
   //   app.get("/users/edit/:id", users.editAnimal);
 
   //   app.post("/users/update", users.updateAnimal);
